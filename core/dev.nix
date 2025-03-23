@@ -20,7 +20,7 @@
     (mkCommand {
       name = "switch";
       help = "Switch to the new home-manager configuration";
-      command = "home-manager switch -b BaC --flake .";
+      command = "home-manager switch -b bac --flake .";
       category = "home-manager";
     })
     (mkCommand {
@@ -44,7 +44,7 @@
     (mkCommand {
       name = "rebuild-all";
       help = "Update, clean, and switch to new configuration";
-      command = "nix flake update && home-manager switch -b BaC --flake .";
+      command = "nix flake update && home-manager switch -b bac --flake .";
       category = "workflow";
     })
   ];

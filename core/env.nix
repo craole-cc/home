@@ -36,7 +36,7 @@
   '';
 
   flash = writeShellScriptBin "Flash" ''
-    Flux home-manager switch -b BaC --flake .
+    Flux home-manager switch -b bac --flake .
   '';
 
   flush = writeShellScriptBin "Flush" ''
