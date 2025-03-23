@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   programs = {
     git = {
       enable = true;
@@ -26,7 +27,7 @@
           "vv" = "issue view";
         };
       };
-      extensions = [pkgs.gh-eco];
+      extensions = [ pkgs.gh-eco ];
     };
   };
 }

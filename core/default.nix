@@ -1,1 +1,6 @@
-{imports = [./dev.nix ./fmt.nix];}
+{
+  imports = [
+    ./dev.nix
+    ./fmt.nix
+  ];
+}

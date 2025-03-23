@@ -1,12 +1,20 @@
-{pkgs, ...}: let
-  mkCommand = {
-    name,
-    help,
-    command,
-    category ? "general",
-  }: {
-    inherit name help command category;
-  };
+{ pkgs, ... }:
+let
+  mkCommand =
+    {
+      name,
+      help,
+      command,
+      category ? "general",
+    }:
+    {
+      inherit
+        name
+        help
+        command
+        category
+        ;
+    };
 
   name = "Home Manager Development Environment";
 
@@ -71,100 +79,108 @@
 
     # Group commands by category
     echo -e "''${BLUE}Nix Commands:''${RESET}"
-    ${builtins.concatStringsSep "\n" (builtins.map (
+    ${builtins.concatStringsSep "\n" (
+      builtins.map (
         cmd:
-          if cmd.category == "nix"
-          then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
-          else ""
-      )
-      commands)}
+        if cmd.category == "nix" then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"'' else ""
+      ) commands
+    )}
 
     echo -e "\n''${BLUE}Home Manager Commands:''${RESET}"
-    ${builtins.concatStringsSep "\n" (builtins.map (
+    ${builtins.concatStringsSep "\n" (
+      builtins.map (
         cmd:
-          if cmd.category == "home-manager"
-          then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
-          else ""
-      )
-      commands)}
+        if cmd.category == "home-manager" then
+          ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
+        else
+          ""
+      ) commands
+    )}
 
     echo -e "\n''${BLUE}Maintenance Commands:''${RESET}"
-    ${builtins.concatStringsSep "\n" (builtins.map (
+    ${builtins.concatStringsSep "\n" (
+      builtins.map (
         cmd:
-          if cmd.category == "maintenance"
-          then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
-          else ""
-      )
-      commands)}
+        if cmd.category == "maintenance" then
+          ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
+        else
+          ""
+      ) commands
+    )}
 
     echo -e "\n''${BLUE}Development Commands:''${RESET}"
-    ${builtins.concatStringsSep "\n" (builtins.map (
+    ${builtins.concatStringsSep "\n" (
+      builtins.map (
         cmd:
-          if cmd.category == "development"
-          then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
-          else ""
-      )
-      commands)}
+        if cmd.category == "development" then
+          ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
+        else
+          ""
+      ) commands
+    )}
 
     echo -e "\n''${BLUE}Workflow Commands:''${RESET}"
-    ${builtins.concatStringsSep "\n" (builtins.map (
+    ${builtins.concatStringsSep "\n" (
+      builtins.map (
         cmd:
-          if cmd.category == "workflow"
-          then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
-          else ""
-      )
-      commands)}
+        if cmd.category == "workflow" then
+          ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
+        else
+          ""
+      ) commands
+    )}
 
     echo -e "\n''${YELLOW}To run a command, use: run <command-name>''${RESET}\n"
   '';
 
-  runner = with msgs;
+  runner =
+    with msgs;
     pkgs.writeShellScriptBin "run" ''
       #!/usr/bin/env bash
 
       # Command map
       case "$1" in
-        ${builtins.concatStringsSep "\n    " (builtins.map (
-          cmd: ''            ${cmd.name})
+        ${builtins.concatStringsSep "\n    " (
+          builtins.map (cmd: ''
+            ${cmd.name})
                       ${cmd.command}
-                      ;;''
-        )
-        commands)}
+                      ;;'') commands
+        )}
         *)
           printf %s: %s\n%s" "${cmdUnknown}" "$1" "${menu}"
           ;;
       esac
     '';
 in
-  pkgs.mkShell {
-    inherit name;
+pkgs.mkShell {
+  inherit name;
 
-    packages = with pkgs; [
-      nixfmt-rfc-style
-      alejandra
-      nixd
-      git
-      gitui
-      home-manager
-      menu
-      runner
-    ];
+  packages = with pkgs; [
+    nixfmt-rfc-style
+    alejandra
+    nixd
+    git
+    gitui
+    home-manager
+    menu
+    runner
+  ];
 
-    shellHook = ''
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flux" "flux"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Fly" "fly"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flash" "flash"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flush" "flush"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flick" "flick"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flake" "flake"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Fmtree" "fmtree"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Fmt" "fmt"}/bin"
+  shellHook = ''
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Flux" "flux"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Fly" "fly"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Flash" "flash"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Flush" "flush"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Flick" "flick"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Flake" "flake"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Fmtree" "fmtree"}/bin"
+    export PATH="$PATH:${pkgs.writeShellScriptBin "Fmt" "fmt"}/bin"
 
-      if [ -z "$HOME_FLAKE" ]; then
-        HOME_FLAKE="$PWD"
-        export HOME_FLAKE
-      fi
+    if [ -z "$HOME_FLAKE" ]; then
+      HOME_FLAKE="$PWD"
+      export HOME_FLAKE
+    fi
 
-      printf "%s\n%s\n" "${msgs.welcome}" "${msgs.menu}"
-    '';
-  }
+    printf "%s\n%s\n" "${msgs.welcome}" "${msgs.menu}"
+  '';
+}
