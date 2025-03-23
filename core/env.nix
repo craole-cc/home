@@ -5,13 +5,15 @@
 }: {
   home = let
     inherit (flake) local;
-    flakeScripts = {
-      flux = pkgs.writeShellScriptBin "Flux" ''
+    mkFlakeScript = name: script:
+      pkgs.writeShellScriptBin name script;
+    scripts = {
+      flux = mkFlakeScript "Flux" ''
         case "$PWD" in  "$HOME_FLAKE"/*) ;;
           *)
             pushd "$HOME_FLAKE" || exit 1
             trap 'popd' EXIT
-           ;;
+            ;;
         esac
 
         status="$(git status --short  2> /dev/null)"
@@ -22,7 +24,7 @@
         fi
       '';
 
-      flake = pkgs.writeShellScriptBin "Flake" ''
+      flake = mkFlakeScript "Flake" ''
         if [[ "$PWD" != "$HOME_FLAKE" ]]; then
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
@@ -30,7 +32,7 @@
         nix flake update
       '';
 
-      flash = pkgs.writeShellScriptBin "Flash" ''
+      flash = mkFlakeScript "Flash" ''
         if [[ "$PWD" != "$HOME_FLAKE" ]]; then
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
@@ -39,7 +41,7 @@
         home-manager switch -b BaC --flake .
       '';
 
-      flush = pkgs.writeShellScriptBin "Flush" ''
+      flush = mkFlakeScript "Flush" ''
         if [[ "$PWD" != "$HOME_FLAKE" ]]; then
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
@@ -50,22 +52,21 @@
         home-manager expire-generations 1
       '';
 
-      flick = pkgs.writeShellScriptBin "Flick" ''
+      flick = mkFlakeScript "Flick" ''
         Flush && Flake && Flash
       '';
 
-      fmtree = pkgs.writeShellScriptBin "Fmtree" ''
+      fmtree = mkFlakeScript "Fmtree" ''
         nix fmt
       '';
     };
   in {
     sessionVariables = {HOME_FLAKE = "${local}";};
-    packages = with flakeScripts; [
+    packages = with scripts; [
       flux
       flake
       flash
       flush
-      fmtree
       flick
     ];
     shellAliases = {
