@@ -29,7 +29,8 @@
       fi
     '';
 
-    fly = mkFlakeScript "Flake" ''
+    fly = mkFlakeScript "Fly" ''
+      Flux
       ${beAtHome}
       nix flake update
     '';
@@ -41,10 +42,10 @@
     '';
 
     flush = mkFlakeScript "Flush" ''
-      Flux
       ${beAtHome}
       nix-store --gc
       home-manager expire-generations 1
+      Flux
     '';
 
     flick = mkFlakeScript "Flick" ''
