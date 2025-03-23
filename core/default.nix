@@ -4,7 +4,7 @@
     username = "craole";
     homeDirectory = "/home/craole";
     shellAliases = {
-      rebuild = ''
+      Flick = ''
         git status --porcelain >/dev/null && gitui
         home-manager switch -b BaC --flake ~/Projects/home
       '';
