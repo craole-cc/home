@@ -48,7 +48,7 @@
   '';
 
   flake = writeShellScriptBin "Flake" ''
-    ${beAtHome}
+    cd "$HOME_FLAKE"
     "$EDITOR" .
   '';
 
