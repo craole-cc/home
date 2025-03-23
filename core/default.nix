@@ -6,7 +6,7 @@
     shellAliases = {
       Flick = ''
         git status --porcelain >/dev/null && gitui
-        home-manager switch -b BaC --flake ~/Projects/home
+        home-manager switch -b BaC --flake "~/Projects/home"
       '';
     };
   };
