@@ -33,7 +33,7 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       debug = true;
       imports = with inputs; [
-        # home-manager.flakeModules.home-manager
+        home-manager.flakeModules.home-manager
         devshell.flakeModule
         treefmt-nix.flakeModule
         ./core
@@ -66,37 +66,37 @@
       #       };
       #     };
       # };
-      flake = {
-        # Define homeConfigurations for all systems
-        home-manager.lib.homeManagerConfiguration  = let
-          paths = {
-            store = ./.;
-            local = "$HOME/Projects/admin";
-            modules = ./home;
-          };
-          # Function to create a home configuration for a given system
-          mkHomeConfig = system: let
-            pkgs = inputs.nixpkgs.legacyPackages.${system};
-            # Get the formatter for this system
-            fmt = self.perSystem.${system}.formatter;
-          in {
-            craole = inputs.home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [paths.modules];
-              extraSpecialArgs = {
-                inherit inputs paths;
-                args = {
-                  inherit fmt;
-                };
-              };
-            };
-          };
-        in
-          # Map over all systems to create homeConfigurations for each
-          builtins.foldl' (
-            acc: system:
-              acc // builtins.mapAttrs (name: value: value) (mkHomeConfig system)
-          ) {} (import inputs.systems);
-      };
+      # flake = {
+      #   # Define homeConfigurations for all systems
+      #   home-manager.lib.homeManagerConfiguration  = let
+      #     paths = {
+      #       store = ./.;
+      #       local = "$HOME/Projects/admin";
+      #       modules = ./home;
+      #     };
+      #     # Function to create a home configuration for a given system
+      #     mkHomeConfig = system: let
+      #       pkgs = inputs.nixpkgs.legacyPackages.${system};
+      #       # Get the formatter for this system
+      #       fmt = self.perSystem.${system}.formatter;
+      #     in {
+      #       craole = inputs.home-manager.lib.homeManagerConfiguration {
+      #         inherit pkgs;
+      #         modules = [paths.modules];
+      #         extraSpecialArgs = {
+      #           inherit inputs paths;
+      #           args = {
+      #             inherit fmt;
+      #           };
+      #         };
+      #       };
+      #     };
+      #   in
+      #     # Map over all systems to create homeConfigurations for each
+      #     builtins.foldl' (
+      #       acc: system:
+      #         acc // builtins.mapAttrs (name: value: value) (mkHomeConfig system)
+      #     ) {} (import inputs.systems);
+      # };
     };
 }
