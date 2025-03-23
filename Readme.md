@@ -1,4 +1,4 @@
-# My Project
+# Home
 
 This project is a configuration setup using the Nix Flakes and Home Manager. It allows you to manage your home environment declaratively with Nix.
 
