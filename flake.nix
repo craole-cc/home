@@ -15,14 +15,15 @@
     ...
   }: let
     system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
   in {
     homeConfigurations."craole" = home-manager.lib.homeManagerConfiguration {
-      pkgs = nixpkgs.legacyPackages.${system};
+      inherit pkgs;
       modules = [
         ./core
         ./packages
       ];
     };
-    formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
+    formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
   };
 }
