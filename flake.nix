@@ -25,9 +25,8 @@
     };
   };
 
-  outputs =
-    inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} {
       debug = true;
       imports = with inputs; [
         # home-manager.flakeModules.home-manager
@@ -37,28 +36,25 @@
       ];
       systems = import inputs.systems;
       flake = {
-        homeConfigurations =
-          let
-            inherit (inputs) nixpkgs home-manager;
+        homeConfigurations = let
+          inherit (inputs) nixpkgs home-manager;
+        in {
+          "craole@QBX" = let
+            system = "x86_64-linux";
+            pkgs = nixpkgs.legacyPackages."${system}";
           in
-          {
-            "craole@QBX" =
-              let
-                system = "x86_64-linux";
-                pkgs = nixpkgs.legacyPackages."${system}";
-              in
-              home-manager.lib.homeManagerConfiguration {
-                inherit pkgs;
-                modules = [ ./home ];
-                extraSpecialArgs = {
-                  inherit inputs;
-                  paths = {
-                    store = ./.;
-                    local = "$HOME/Projects/admin";
-                  };
+            home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [./home];
+              extraSpecialArgs = {
+                inherit inputs;
+                paths = {
+                  store = ./.;
+                  local = "$HOME/Projects/admin";
                 };
               };
-          };
+            };
+        };
       };
     };
 }

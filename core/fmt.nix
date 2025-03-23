@@ -1,63 +1,64 @@
-# {pkgs, ...}:
-# pkgs.nixfmt-tree.override {
-#   settings = {
-#     on-unmatched = "info";
-#     tree-root-file = ".git/index";
-#     formatter = {
-#       deadnix = {
-#         command = "deadnix";
-#         priority = 1;
-#         includes = ["*.nix"];
-#       };
-#       # nixfmt = {
-#       #   command = "nixfmt";
-#       #   priority = 2;
-#       #   includes = ["*.nix"];
-#       # };
-#       alejandra = {
-#         command = "alejandra";
-#         priority = 2;
-#         includes = ["*.nix"];
-#       };
-#     };
-#   };
-#   runtimePackages = with pkgs; [
-#     deadnix
-#     nixfmt-rfc-style
-#     alejandra
-#   ];
-# }
 {
-  perSystem = {
+  perSystem = {config, ...}: {
+    formatter = config.treefmt.build.wrapper;
     treefmt = {
       projectRootFile = "flake.nix";
-      global.on-unmatched = "info";
       programs = {
-        nixfmt.enable = true;
-        # rustfmt = {
-        #   enable = true;
-        #   inherit (rustToolchain) package;
-        # };
-        shellcheck.enable = true;
-        shfmt.enable = true;
-        taplo.enable = true;
-        yamlfmt.enable = true;
-      };
-      formatter = {
-        deadnix = {
-          command = "deadnix";
-          priority = 1;
-          includes = ["*.nix"];
-        };
-        # nixfmt = {
-        #   command = "nixfmt";
-        #   priority = 2;
-        #   includes = ["*.nix"];
-        # };
+        #| Nix
         alejandra = {
-          command = "alejandra";
+          enable = true;
           priority = 2;
-          includes = ["*.nix"];
+        };
+        deadnix = {
+          enable = true;
+          priority = 1;
+        };
+
+        #| Shellscript
+        shellcheck = {
+          enable = true;
+          priority = 1;
+        };
+        shfmt = {
+          enable = true;
+          priority = 2;
+        };
+
+        #| Documentation & Configuration
+        mdsh = {
+          enable = true;
+          priority = 1;
+        };
+        taplo = {
+          enable = true;
+          priority = 1;
+        };
+        yamlfmt = {
+          enable = true;
+          priority = 1;
+        };
+
+        #| Web & Fallback
+        biome = {
+          enable = true;
+          priority = 1;
+        };
+        prettier = {
+          enable = true;
+          priority = 2;
+        };
+      };
+      settings = {
+        global.on-unmatched = "info";
+        formatter = let
+          sh.includes = [
+            "**/sh/**"
+            "**/shellscript/**"
+            "**/bash/**"
+          ];
+        in {
+          shellcheck.includes = sh.includes;
+          shfmt.includes = sh.includes;
         };
       };
     };
