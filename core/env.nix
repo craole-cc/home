@@ -58,7 +58,10 @@
 in {
   home = {
     # file."hmConf".source = config.lib.file.mkOutOfStoreSymlink paths.local; #TODO: What can this do?
-    sessionVariables = {HOME_FLAKE = "${local}";};
+    sessionVariables = {
+      HOME_FLAKE = "${local}";
+      EDITOR = "code";
+    };
     packages = [
       flux
       fly
@@ -69,7 +72,6 @@ in {
       flake
     ];
     shellAliases = {
-      EDITOR = "code";
       Fmt = "Fmtree";
     };
   };
