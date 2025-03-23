@@ -4,7 +4,7 @@
     alejandra
     nixd
     nil
-    nixfmt-tree
+    # nixfmt-tree
     # nixfmt-rfc-style
   ];
 }

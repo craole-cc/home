@@ -4,9 +4,12 @@
     username = "craole";
     homeDirectory = "/home/craole";
     shellAliases = {
-      # rebuild = ''home-manager switch --flake ${self}'';
+      rebuild = ''
+        git status --porcelain >/dev/null && gitui
+        home-manager switch -b BaC --flake ~/Projects/home
+      '';
     };
   };
   programs.home-manager.enable = true;
-  imports = [ ];
+  imports = [];
 }
