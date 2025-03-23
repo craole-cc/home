@@ -42,9 +42,9 @@
           "craole@QBX" = let
             system = "x86_64-linux";
             pkgs = nixpkgs.legacyPackages."${system}";
-            args.fmt = {
-              inherit (inputs.self.perSystem.${system}._module.args.fmt) config packages;
-            };
+            # args.fmt = {
+            #   inherit (inputs.self.perSystem.${system}._module.args.fmt) config packages;
+            # };
             paths = {
               store = ./.;
               local = "$HOME/Projects/admin";
@@ -55,7 +55,11 @@
               inherit pkgs;
               modules = [paths.modules];
               extraSpecialArgs = {
-                inherit inputs args paths;
+                inherit
+                  inputs
+                  # args
+                  paths
+                  ;
               };
             };
         };
