@@ -1,8 +1,9 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    # alejandra
-    nixfmt
+    alejandra
     nixd
     nil
+    nixfmt-tree
+    # nixfmt-rfc-style
   ];
 }
