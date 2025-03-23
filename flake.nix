@@ -42,16 +42,20 @@
           "craole@QBX" = let
             system = "x86_64-linux";
             pkgs = nixpkgs.legacyPackages."${system}";
+            args.fmt = {
+              inherit (inputs.self.perSystem.${system}._module.args.fmt) config packages;
+            };
+            paths = {
+              store = ./.;
+              local = "$HOME/Projects/admin";
+              modules = ./home;
+            };
           in
             home-manager.lib.homeManagerConfiguration {
               inherit pkgs;
-              modules = [./home];
+              modules = [paths.modules];
               extraSpecialArgs = {
-                inherit inputs;
-                paths = {
-                  store = ./.;
-                  local = "$HOME/Projects/admin";
-                };
+                inherit inputs args paths;
               };
             };
         };
