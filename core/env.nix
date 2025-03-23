@@ -47,6 +47,11 @@
     Flux Flush && Fly && Flash
   '';
 
+  flake = writeShellScriptBin "Flake" ''
+    ${beAtHome}
+    "$EDITOR" .
+  '';
+
   fmtree = writeShellScriptBin "Fmtree" ''
     Flux nix fmt
   '';
@@ -61,8 +66,10 @@ in {
       flush
       flick
       fmtree
+      flake
     ];
     shellAliases = {
+      EDITOR = "code";
       Fmt = "Fmtree";
     };
   };
