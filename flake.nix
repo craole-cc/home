@@ -39,64 +39,100 @@
         ./core
       ];
       systems = import inputs.systems;
-      # flake = {
-      #   homeConfigurations.craole = let
-      #     inherit (inputs) nixpkgs home-manager;
-      #     system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
-      #     pkgs = nixpkgs.legacyPackages."${system}";
-      #     args = {
-      #       #TODO: how can i get _modules.args here or passed into home-manager?
-      #       fmt = self.perSystem.${system}._module.args.fmt;
-      #     };
-      #     paths = {
-      #       store = ./.;
-      #       local = "$HOME/Projects/admin";
-      #       modules = ./home;
-      #     };
-      #   in
-      #     home-manager.lib.homeManagerConfiguration {
-      #       inherit pkgs;
-      #       modules = [paths.modules];
-      #       extraSpecialArgs = {
-      #         inherit
-      #           inputs
-      #           args
-      #           paths
-      #           ;
-      #       };
-      #     };
-      # };
-      # flake = {
-      #   # Define homeConfigurations for all systems
-      #   home-manager.lib.homeManagerConfiguration  = let
-      #     paths = {
-      #       store = ./.;
-      #       local = "$HOME/Projects/admin";
-      #       modules = ./home;
-      #     };
-      #     # Function to create a home configuration for a given system
-      #     mkHomeConfig = system: let
-      #       pkgs = inputs.nixpkgs.legacyPackages.${system};
-      #       # Get the formatter for this system
-      #       fmt = self.perSystem.${system}.formatter;
-      #     in {
-      #       craole = inputs.home-manager.lib.homeManagerConfiguration {
-      #         inherit pkgs;
-      #         modules = [paths.modules];
-      #         extraSpecialArgs = {
-      #           inherit inputs paths;
-      #           args = {
-      #             inherit fmt;
-      #           };
-      #         };
-      #       };
-      #     };
-      #   in
-      #     # Map over all systems to create homeConfigurations for each
-      #     builtins.foldl' (
-      #       acc: system:
-      #         acc // builtins.mapAttrs (name: value: value) (mkHomeConfig system)
-      #     ) {} (import inputs.systems);
-      # };
+      perSystem = {
+        system,
+        config,
+        pkgs,
+        ...
+      }: {
+        # Define your paths and other variables
+        _module.args = {
+          paths = {
+            store = ./.;
+            local = "$HOME/Projects/admin";
+            modules = ./home;
+          };
+        };
+
+        # Configure home-manager
+        home-manager = {
+          extraSpecialArgs = {
+            inherit inputs;
+            paths = config._module.args.paths;
+            args = {
+              fmt = config.formatter;
+            };
+          };
+
+          users.craole = {pkgs, ...}: {
+            imports = [config._module.args.paths.modules];
+            # Home-manager specific configuration can go here
+          };
+        };
+
+        # Formatter configuration
+        formatter = config.treefmt.build.wrapper;
+      };
     };
+
+  # flake = {
+  #   homeConfigurations.craole = let
+  #     inherit (inputs) nixpkgs home-manager;
+  #     system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
+  #     pkgs = nixpkgs.legacyPackages."${system}";
+  #     args = {
+  #       #TODO: how can i get _modules.args here or passed into home-manager?
+  #       fmt = self.perSystem.${system}._module.args.fmt;
+  #     };
+  #     paths = {
+  #       store = ./.;
+  #       local = "$HOME/Projects/admin";
+  #       modules = ./home;
+  #     };
+  #   in
+  #     home-manager.lib.homeManagerConfiguration {
+  #       inherit pkgs;
+  #       modules = [paths.modules];
+  #       extraSpecialArgs = {
+  #         inherit
+  #           inputs
+  #           args
+  #           paths
+  #           ;
+  #       };
+  #     };
+  # };
+  # flake = {
+  #   # Define homeConfigurations for all systems
+  #   home-manager.lib.homeManagerConfiguration  = let
+  #     paths = {
+  #       store = ./.;
+  #       local = "$HOME/Projects/admin";
+  #       modules = ./home;
+  #     };
+  #     # Function to create a home configuration for a given system
+  #     mkHomeConfig = system: let
+  #       pkgs = inputs.nixpkgs.legacyPackages.${system};
+  #       # Get the formatter for this system
+  #       fmt = self.perSystem.${system}.formatter;
+  #     in {
+  #       craole = inputs.home-manager.lib.homeManagerConfiguration {
+  #         inherit pkgs;
+  #         modules = [paths.modules];
+  #         extraSpecialArgs = {
+  #           inherit inputs paths;
+  #           args = {
+  #             inherit fmt;
+  #           };
+  #         };
+  #       };
+  #     };
+  #   in
+  #     # Map over all systems to create homeConfigurations for each
+  #     builtins.foldl' (
+  #       acc: system:
+  #         acc // builtins.mapAttrs (name: value: value) (mkHomeConfig system)
+  #     ) {} (import inputs.systems);
+  # };
+  # };
 }
