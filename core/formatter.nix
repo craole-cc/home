@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   fmtree = pkgs.nixfmt-tree.override {
     settings = {
       on-unmatched = "info";
@@ -8,7 +9,7 @@
         deadnix = {
           command = "deadnix";
           priority = 1;
-          includes = ["*.nix"];
+          includes = [ "*.nix" ];
         };
         # nixfmt = {
         #   command = "nixfmt";
@@ -18,7 +19,7 @@
         alejandra = {
           command = "alejandra";
           priority = 2;
-          includes = ["*.nix"];
+          includes = [ "*.nix" ];
         };
       };
     };

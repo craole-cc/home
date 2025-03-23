@@ -16,6 +16,7 @@
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
+    fmtree = import ./core/formatter.nix {inherit pkgs;};
   in {
     homeConfigurations."craole" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
@@ -25,6 +26,6 @@
       ];
     };
     # formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
-    formatter.${system} = pkgs.nixfmt-tree;
+    formatter.${system} = fmtree;
   };
 }
