@@ -36,6 +36,7 @@
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
         fi
+        status="$(git status --short /dev/null)"
         git status --porcelain >/dev/null && gitui
         nix-store --gc
         home-manager expire-generations 1
@@ -56,8 +57,8 @@
       flake
       flash
       flush
-      flick
       fmtree
+      flick
     ];
     shellAliases = {
       Fmt = "fmtree";
