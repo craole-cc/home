@@ -1,2 +1,32 @@
-packages
-packages
+#| Development Environment
+result
+result-*
+.direnv/
+.devenv/
+.env
+
+#| Rust
+target/
+debug/
+**/*.rs.bk
+*.pdb
+Cargo.lock # Uncomment for libraries
+
+#| Build & Cache
+dist/
+build/
+out/
+.cache/
+
+#| Logs & Temp
+*.log
+tmp/
+temp/
+*.tmp
+  *~
+
+#| Editor Working Files
+tags
+*.sw[a-p]
+*.bak
+*.bac
