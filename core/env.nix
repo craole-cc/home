@@ -7,67 +7,67 @@
     inherit (flake) local;
     mkFlakeScript = name: script:
       pkgs.writeShellScriptBin name script;
-    scripts = {
-      flux = mkFlakeScript "Flux" ''
-        case "$PWD" in  "$HOME_FLAKE"/*) ;;
-          *)
-            pushd "$HOME_FLAKE" || exit 1
-            trap 'popd' EXIT
-            ;;
-        esac
 
-        status="$(git status --short  2> /dev/null)"
-        if [ -n "$status" ]; then
-          gitui
-        else
-          exit 0
-        fi
-      '';
-
-      flake = mkFlakeScript "Flake" ''
-        if [[ "$PWD" != "$HOME_FLAKE" ]]; then
+    flux = mkFlakeScript "Flux" ''
+      case "$PWD" in  "$HOME_FLAKE"/*) ;;
+        *)
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
-        fi
-        nix flake update
-      '';
+          ;;
+      esac
 
-      flash = mkFlakeScript "Flash" ''
-        if [[ "$PWD" != "$HOME_FLAKE" ]]; then
-          pushd "$HOME_FLAKE" || exit 1
-          trap 'popd' EXIT
-        fi
-        git status --porcelain >/dev/null && gitui
-        home-manager switch -b BaC --flake .
-      '';
+      status="$(git status --short  2> /dev/null)"
+      if [ -n "$status" ]; then
+        gitui
+      else
+        exit 0
+      fi
+    '';
 
-      flush = mkFlakeScript "Flush" ''
-        if [[ "$PWD" != "$HOME_FLAKE" ]]; then
-          pushd "$HOME_FLAKE" || exit 1
-          trap 'popd' EXIT
-        fi
-        status="$(git status --short  2> /dev/null)"
-        git status --porcelain >/dev/null && gitui
-        nix-store --gc
-        home-manager expire-generations 1
-      '';
+    fly = mkFlakeScript "Flake" ''
+      if [[ "$PWD" != "$HOME_FLAKE" ]]; then
+        pushd "$HOME_FLAKE" || exit 1
+        trap 'popd' EXIT
+      fi
+      nix flake update
+    '';
 
-      flick = mkFlakeScript "Flick" ''
-        Flush && Flake && Flash
-      '';
+    flash = mkFlakeScript "Flash" ''
+      if [[ "$PWD" != "$HOME_FLAKE" ]]; then
+        pushd "$HOME_FLAKE" || exit 1
+        trap 'popd' EXIT
+      fi
+      git status --porcelain >/dev/null && gitui
+      home-manager switch -b BaC --flake .
+    '';
 
-      fmtree = mkFlakeScript "Fmtree" ''
-        nix fmt
-      '';
-    };
+    flush = mkFlakeScript "Flush" ''
+      if [[ "$PWD" != "$HOME_FLAKE" ]]; then
+        pushd "$HOME_FLAKE" || exit 1
+        trap 'popd' EXIT
+      fi
+      status="$(git status --short  2> /dev/null)"
+      git status --porcelain >/dev/null && gitui
+      nix-store --gc
+      home-manager expire-generations 1
+    '';
+
+    flick = mkFlakeScript "Flick" ''
+      Flush && Flake && Flash
+    '';
+
+    fmtree = mkFlakeScript "Fmtree" ''
+      nix fmt
+    '';
   in {
     sessionVariables = {HOME_FLAKE = "${local}";};
-    packages = with scripts; [
+    packages = [
       flux
-      flake
       flash
       flush
       flick
+      fly
+      fmtree
     ];
     shellAliases = {
       Fmt = "fmtree";
