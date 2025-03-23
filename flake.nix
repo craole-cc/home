@@ -25,6 +25,6 @@
       ];
     };
     # formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
-    formatter.${system} = pkgs.nixpkgs.nixfmt-tree;
+    formatter.${system} = pkgs.nixfmt-tree;
   };
 }
