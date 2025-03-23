@@ -35,23 +35,32 @@
         # ./core
       ];
       systems = import inputs.systems;
-      flake = {
-        # Define home-manager configurations outside perSystem
-        homeConfigurations."craole@QBX" = let
-          system = "x86_64-linux"; # You can make this dynamic if needed
-          pkgs = import inputs.nixpkgs {inherit system;};
-        in
-          inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [./home];
-            extraSpecialArgs = {
-              inherit inputs;
-              paths = {
-                store = ./.;
-                local = "$HOME/Projects/admin";
-              };
-            };
+      home-manager = {
+        users."craole@QBX" = import ./home;
+        extraSpecialArgs = {
+          inherit inputs;
+          paths = {
+            store = ./.;
+            local = "$HOME/Projects/admin";
           };
+        };
       };
+      # flake = {
+      #   homeConfigurations."craole@QBX" = let
+      #     system = "x86_64-linux";
+      #     pkgs = import inputs.nixpkgs {inherit system;};
+      #   in
+      #     inputs.home-manager.lib.homeManagerConfiguration {
+      #       inherit pkgs;
+      #       modules = [./home];
+      #       extraSpecialArgs = {
+      #         inherit inputs;
+      #         paths = {
+      #           store = ./.;
+      #           local = "$HOME/Projects/admin";
+      #         };
+      #       };
+      #     };
+      # };
     };
 }
