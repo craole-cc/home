@@ -7,20 +7,32 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
     nixpkgs,
     home-manager,
+    systems,
     ...
   }: let
     system = "x86_64-linux";
-    alpha = "craole";
-    pkgs = nixpkgs.legacyPackages.${system};
+    pkgs = nixpkgs.legacyPackages.${system}; #TODO: TEMPORARY
+    supportedSystems = nixpkgs.lib.genAttrs (import systems);
   in {
-    devShells.${system} = import ./core/dev.nix {inherit pkgs;};
-    formatter.${system} = import ./core/fmt.nix {inherit pkgs;};
-    homeConfigurations.${alpha} = home-manager.lib.homeManagerConfiguration {
+    devShells = supportedSystems (system: let
+      pkgs = import nixpkgs {inherit system;};
+      default = import ./core/dev.nix {inherit pkgs;};
+    in {inherit default;});
+
+    formatter = supportedSystems (system: let
+      pkgs = import nixpkgs {inherit system;};
+      system = import ./core/fmt.nix {inherit pkgs;};
+    in {inherit system;});
+
+    # devShells.${system} = import ./core/dev.nix {inherit pkgs;};
+    # formatter.${system} = import ./core/fmt.nix {inherit pkgs;};
+    homeConfigurations."craole" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
         ./core

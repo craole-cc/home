@@ -1,5 +1,4 @@
 {pkgs, ...}: let
-  # Helper function to create menu commands with descriptions
   mkCommand = {
     name,
     help,
@@ -9,43 +8,42 @@
     inherit name help command category;
   };
 
-  # Define common commands
   commands = [
     (mkCommand {
       name = "update";
-      help = "Update flake inputs";
-      command = "nix flake update";
-      category = "nix";
+      help = "Update flake inputs (Fly)";
+      command = "Fly";
+      category = "maintenance";
     })
     (mkCommand {
       name = "switch";
-      help = "Switch to the new home-manager configuration";
-      command = "home-manager switch -b bac --flake .";
-      category = "home-manager";
+      help = "Switch to the new home-manager configuration (Flash)";
+      command = "Flash";
+      category = "maintenance";
     })
     (mkCommand {
       name = "clean";
-      help = "Clean up old generations and garbage collect";
-      command = "home-manager expire-generations 1 && nix-collect-garbage --delete-old";
+      help = "Clean up old generations and garbage collect (Flush)";
+      command = "Flush";
       category = "maintenance";
     })
     (mkCommand {
       name = "format";
-      help = "Format nix files";
-      command = "nix fmt";
+      help = "Format nix files (Fmtree)";
+      command = "Fmtree";
       category = "development";
     })
     (mkCommand {
-      name = "git-status";
-      help = "Check git status with gitui";
-      command = "gitui";
-      category = "git";
+      name = "rebuild-all";
+      help = "Update, clean, and switch to new configuration (Flick)";
+      command = "Flick";
+      category = "maintenance";
     })
     (mkCommand {
-      name = "rebuild-all";
-      help = "Update, clean, and switch to new configuration";
-      command = "nix flake update && home-manager switch -b bac --flake .";
-      category = "workflow";
+      name = "edit";
+      help = "Open the configuration in your editor (Flake)";
+      command = "Flake";
+      category = "development";
     })
   ];
 
@@ -99,15 +97,6 @@
       )
       commands)}
 
-    echo -e "\n''${BLUE}Git Commands:''${RESET}"
-    ${builtins.concatStringsSep "\n" (builtins.map (
-        cmd:
-          if cmd.category == "git"
-          then ''echo -e "  ''${GREEN}${cmd.name}''${RESET} - ${cmd.help}"''
-          else ""
-      )
-      commands)}
-
     echo -e "\n''${BLUE}Workflow Commands:''${RESET}"
     ${builtins.concatStringsSep "\n" (builtins.map (
         cmd:
@@ -120,42 +109,31 @@
     echo -e "\n''${YELLOW}To run a command, use: run <command-name>''${RESET}\n"
   '';
 
-  # Create command runner script
-  runner = pkgs.writeShellScriptBin "run" ''
-    #!/usr/bin/env bash
+  msgs = {
+    usage = "To run a command, use: run <command-name>";
+    menu = "Run 'menu' to see available commands";
+    cmdUnknown = "Unknown command";
+    welcome = "Welcome to the Home Manager Development Environment!";
+  };
 
-    # Check if HOME_FLAKE is set
-    if [ -z "$HOME_FLAKE" ]; then
-      export HOME_FLAKE="$PWD"
-    fi
+  runner = with msgs;
+    pkgs.writeShellScriptBin "run" ''
+      #!/usr/bin/env bash
 
-    # Ensure we're in the flake directory
-    case "$PWD" in
-      "$HOME_FLAKE"/*)
-        # Already in the flake directory or a subdirectory
-        ;;
-      *)
-        pushd "$HOME_FLAKE" || exit 1
-        trap 'popd' EXIT
-        ;;
-    esac
+      # Command map
+      case "$1" in
+        ${builtins.concatStringsSep "\n    " (builtins.map (
+          cmd: ''            ${cmd.name})
+                      ${cmd.command}
+                      ;;''
+        )
+        commands)}
+        *)
+          printf %s: %s\n%s" "${cmdUnknown}" "$1" "${menu}"
+          ;;
+      esac
+    '';
 
-    # Command map
-    case "$1" in
-      ${builtins.concatStringsSep "\n    " (builtins.map (
-        cmd: ''          ${cmd.name})
-                    ${cmd.command}
-                    ;;''
-      )
-      commands)}
-      *)
-        echo "Unknown command: $1"
-        echo "Run 'menu' to see available commands"
-        ;;
-    esac
-  '';
-
-  # Define the development shell
   mkDevShell = {
     name ? "home-manager-env",
     packages ? [],
@@ -165,7 +143,7 @@
 
       packages = with pkgs;
         [
-          alejandra
+          nixfmt-rfc-style
           nixd
           git
           gitui
@@ -176,15 +154,27 @@
         ++ packages;
 
       shellHook = ''
-        export HOME_FLAKE="$PWD"
-        echo "Welcome to Home Manager development environment!"
-        echo "Type 'menu' to see available commands"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flux" "flux"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Fly" "fly"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flash" "flash"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flush" "flush"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flick" "flick"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flake" "flake"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Fmtree" "fmtree"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Fmt" "fmt"}/bin"
+
+        if [ -z "$HOME_FLAKE" ]; then
+          HOME_FLAKE="$PWD"
+          export HOME_FLAKE
+        fi
+
+        printf "%s\n%s\n" "${msgs.welcome}" "${msgs.menu}"
       '';
     };
 in {
-  # Export the development shell creator
+  #@ Export the development shell creator
   inherit mkDevShell;
 
-  # Export default devShell for convenience
+  #@ Export default devShell for convenience
   default = mkDevShell {};
 }
