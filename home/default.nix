@@ -5,5 +5,5 @@
     homeDirectory = "/home/craole";
   };
   programs.home-manager.enable = true;
-  imports = [./env ./packages];
+  imports = [./environment ./packages];
 }
