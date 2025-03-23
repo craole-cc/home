@@ -48,7 +48,7 @@
   '';
 
   flake = writeShellScriptBin "Flake" ''
-    cd "$HOME_FLAKE"
+    cd "$HOME_FLAKE" || exit 1
     "$EDITOR" .
   '';
 
