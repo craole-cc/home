@@ -44,7 +44,7 @@
     '';
 
     flick = writeShellScriptBin "Flick" ''
-      Flush && Fly && Flash
+      Flux Flush && Fly && Flash
     '';
 
     fmtree = writeShellScriptBin "Fmtree" ''
