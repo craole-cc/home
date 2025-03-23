@@ -1,10 +1,10 @@
 {
-  flake,
   pkgs,
+  paths,
   ...
 }: {
   home = let
-    inherit (flake) local;
+    inherit (paths) local;
     inherit (pkgs) writeShellScriptBin;
 
     #@ Define a helper to ensure we're in the flake directory

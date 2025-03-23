@@ -26,7 +26,7 @@
         ./packages
       ];
       extraSpecialArgs = {
-        flake = {
+        paths = {
           store = ./.;
           local = "$HOME/Projects/home";
         };
