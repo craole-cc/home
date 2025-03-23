@@ -20,7 +20,7 @@
     '';
 
     #@ Define the script that handles git status and running commands
-    flux = "Flux" ''
+    flux = writeShellScriptBin "Flux" ''
       ${beAtHome}
 
       status="$(git status --short 2> /dev/null)"
