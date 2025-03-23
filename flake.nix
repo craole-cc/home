@@ -29,38 +29,32 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       debug = true;
       imports = with inputs; [
-        home-manager.flakeModules.home-manager
+        # home-manager.flakeModules.home-manager
         devshell.flakeModule
         treefmt-nix.flakeModule
-        # ./core
+        ./core
       ];
       systems = import inputs.systems;
-      home-manager = {
-        users."craole@QBX" = import ./home;
-        extraSpecialArgs = {
-          inherit inputs;
-          paths = {
-            store = ./.;
-            local = "$HOME/Projects/admin";
-          };
+      flake = {
+        homeConfigurations = let
+          inherit (inputs) nixpkgs home-manager;
+        in {
+          "craole@QBX" = let
+            system = "x86_64-linux";
+            pkgs = nixpkgs.legacyPackages."${system}";
+          in
+            home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [./home];
+              extraSpecialArgs = {
+                inherit inputs;
+                paths = {
+                  store = ./.;
+                  local = "$HOME/Projects/admin";
+                };
+              };
+            };
         };
       };
-      # flake = {
-      #   homeConfigurations."craole@QBX" = let
-      #     system = "x86_64-linux";
-      #     pkgs = import inputs.nixpkgs {inherit system;};
-      #   in
-      #     inputs.home-manager.lib.homeManagerConfiguration {
-      #       inherit pkgs;
-      #       modules = [./home];
-      #       extraSpecialArgs = {
-      #         inherit inputs;
-      #         paths = {
-      #           store = ./.;
-      #           local = "$HOME/Projects/admin";
-      #         };
-      #       };
-      #     };
-      # };
     };
 }
