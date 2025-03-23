@@ -7,11 +7,19 @@
     inherit (flake) local;
     flakeScripts = {
       flux = pkgs.writeShellScriptBin "Flux" ''
-        if [[ "$PWD" != "$HOME_FLAKE" ]]; then
-          pushd "$HOME_FLAKE" || exit 1
-          trap 'popd' EXIT
+        case "$PWD" in  "$HOME_FLAKE"/*) ;;
+          *)
+            pushd "$HOME_FLAKE" || exit 1
+            trap 'popd' EXIT
+           ;;
+        esac
+
+        status="$(git status --short  2> /dev/null)"
+        if [ -n "$status" ]; then
+          gitui
+        else
+          exit 0
         fi
-        git status --porcelain >/dev/null && gitui
       '';
 
       flake = pkgs.writeShellScriptBin "Flake" ''
@@ -36,7 +44,7 @@
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
         fi
-        status="$(git status --short /dev/null)"
+        status="$(git status --short  2> /dev/null)"
         git status --porcelain >/dev/null && gitui
         nix-store --gc
         home-manager expire-generations 1
