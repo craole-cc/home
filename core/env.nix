@@ -48,8 +48,7 @@
   '';
 
   flake = writeShellScriptBin "Flake" ''
-    cd "$HOME_FLAKE" || exit 1
-    "$EDITOR" .
+    cd "$HOME_FLAKE" && "$EDITOR" .
   '';
 
   fmtree = writeShellScriptBin "Fmtree" ''
