@@ -52,8 +52,7 @@
   '';
 in {
   home = {
-    file."hmConf".source = config.lib.file.mkOutOfStoreSymlink paths.local;
-
+    # file."hmConf".source = config.lib.file.mkOutOfStoreSymlink paths.local; #TODO: What can this do?
     sessionVariables = {HOME_FLAKE = "${local}";};
     packages = [
       flux
