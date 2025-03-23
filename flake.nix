@@ -18,7 +18,8 @@
     alpha = "craole";
     pkgs = nixpkgs.legacyPackages.${system};
   in {
-    formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
+    devShells.${system} = import ./core/dev.nix {inherit pkgs;};
+    formatter.${system} = import ./core/fmt.nix {inherit pkgs;};
     homeConfigurations.${alpha} = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [

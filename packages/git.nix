@@ -17,6 +17,13 @@
       settings = {
         aliases = {
           "as" = "auth status";
+          "co" = "pr checkout";
+          "cp" = "pr create";
+          "cv" = "pr view";
+          "dl" = "pr list";
+          "ds" = "pr status";
+          "pr" = "pr view --web";
+          "vv" = "issue view";
         };
       };
       extensions = [pkgs.gh-eco];
