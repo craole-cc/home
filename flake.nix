@@ -1,30 +1,6 @@
 {
   description = "Home Manager configuration";
 
-  inputs = {
-    nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
-    };
-    systems = {
-      url = "github:nix-systems/default";
-    };
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    devshell = {
-      url = "github:numtide/devshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
   outputs = inputs @ {
     self,
     flake-parts,
@@ -39,15 +15,20 @@
         ./core
       ];
       systems = import inputs.systems;
-
+      perSystem = {system, ...}: {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = builtins.attrValues inputs.self.overlays;
+        };
+      };
       flake = {
         homeConfigurations.craole = let
           inherit (inputs) nixpkgs home-manager;
-          system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
-          pkgs = nixpkgs.legacyPackages."${system}";
+          # system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
+          # pkgs = nixpkgs.legacyPackages."${system}";
           args = {
             #TODO: how can i get _modules.args here or passed into home-manager?
-            fmt = self.perSystem.${system}._module.args.fmt;
+            # fmt = config._module.args.fmt;
           };
           paths = {
             store = ./.;
@@ -56,7 +37,7 @@
           };
         in
           home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
+            # inherit pkgs;
             modules = [paths.modules];
             extraSpecialArgs = {
               inherit
@@ -68,37 +49,53 @@
           };
       };
     };
-  # flake = {
-  #   # Define homeConfigurations for all systems
-  #   home-manager.lib.homeManagerConfiguration  = let
-  #     paths = {
-  #       store = ./.;
-  #       local = "$HOME/Projects/admin";
-  #       modules = ./home;
-  #     };
-  #     # Function to create a home configuration for a given system
-  #     mkHomeConfig = system: let
-  #       pkgs = inputs.nixpkgs.legacyPackages.${system};
-  #       # Get the formatter for this system
-  #       fmt = self.perSystem.${system}.formatter;
-  #     in {
-  #       craole = inputs.home-manager.lib.homeManagerConfiguration {
-  #         inherit pkgs;
-  #         modules = [paths.modules];
-  #         extraSpecialArgs = {
-  #           inherit inputs paths;
-  #           args = {
-  #             inherit fmt;
-  #           };
-  #         };
-  #       };
-  #     };
-  #   in
-  #     # Map over all systems to create homeConfigurations for each
-  #     builtins.foldl' (
-  #       acc: system:
-  #         acc // builtins.mapAttrs (name: value: value) (mkHomeConfig system)
-  #     ) {} (import inputs.systems);
-  # };
-  # };
+
+  inputs = {
+    nixpkgs = {
+      type = "github";
+      owner = "nixos";
+      repo = "nixpkgs";
+      ref = "nixos-unstable";
+    };
+
+    systems = {
+      type = "github";
+      owner = "nix-systems";
+      repo = "default";
+    };
+
+    nixos-wsl = {
+      type = "github";
+      owner = "nix-community";
+      repo = "NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    flake-parts = {
+      type = "github";
+      owner = "hercules-ci";
+      repo = "flake-parts";
+    };
+
+    home-manager = {
+      type = "github";
+      owner = "nix-community";
+      repo = "home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    devshell = {
+      type = "github";
+      owner = "numtide";
+      repo = "devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    treefmt-nix = {
+      type = "github";
+      owner = "numtide";
+      repo = "treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 }
