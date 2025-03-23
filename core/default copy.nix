@@ -3,7 +3,7 @@
     stateVersion = "24.11";
     username = "craole";
     homeDirectory = "/home/craole";
-    packages = [ ];
+    packages = [];
     file = {
       # # Building this configuration will create a copy of 'dotfiles/screenrc' in
       # # the Nix store. Activating the configuration will then make '~/.screenrc' a

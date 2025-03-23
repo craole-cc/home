@@ -17,17 +17,20 @@
     system = "x86_64-linux";
     alpha = "craole";
     pkgs = nixpkgs.legacyPackages.${system};
-    fmtree = import ./core/formatter.nix {inherit pkgs;};
   in {
+    formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
     homeConfigurations.${alpha} = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
         ./core
         ./packages
       ];
+      extraSpecialArgs = {
+        flake = {
+          store = ./.;
+          local = "$HOME/Projects/home";
+        };
+      };
     };
-    formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
-    # formatter.${system} = fmtree;
-    # formatter.${system} = pkgs.nixfmt-tree;
   };
 }
