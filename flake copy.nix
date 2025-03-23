@@ -3,17 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    systems.url = "github:nix-systems/default";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
     nixpkgs,
-    systems,
     home-manager,
+    systems,
     ...
   }: let
     system = "x86_64-linux";
@@ -30,6 +30,8 @@
       system = import ./core/fmt.nix {inherit pkgs;};
     in {inherit system;});
 
+    # devShells.${system} = import ./core/dev.nix {inherit pkgs;};
+    # formatter.${system} = import ./core/fmt.nix {inherit pkgs;};
     homeConfigurations."craole" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
