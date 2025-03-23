@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{pkgs, ...}: {
   fmtree = pkgs.nixfmt-tree.override {
     settings = {
       on-unmatched = "info";
@@ -28,4 +28,5 @@
       alejandra
     ];
   };
-in {home.packages = [fmtree];}
+  # in {home.packages = [fmtree];}
+}
