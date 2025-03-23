@@ -1,5 +1,24 @@
 {
-  perSystem = {config, ...}: {
+  perSystem = {
+    config,
+    pkgs,
+    ...
+  }: {
+    _module.args.fmt = {
+      config = config.treefmt.build.configFile;
+      wrapper = config.treefmt.build.wrapper;
+      packages = with pkgs; [
+        alejandra
+        deadnix
+        shfmt
+        shellcheck
+        mdsh
+        taplo
+        yamlfmt
+        biome
+        deno
+      ];
+    };
     formatter = config.treefmt.build.wrapper;
     treefmt = {
       projectRootFile = "flake.nix";
@@ -43,7 +62,7 @@
           enable = true;
           priority = 1;
         };
-        prettier = {
+        deno = {
           enable = true;
           priority = 2;
         };

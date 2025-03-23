@@ -4,9 +4,12 @@
       enable = true;
       shellAliases = {
         format-nix = "nix run nixpkgs#alejandra --";
+        fmtree = "treefmt";
       };
       initExtra = ''
-        # Add your custom bash configurations here
+        fmtree() {
+          treefmt "$@"
+        }
       '';
     };
     atuin = {

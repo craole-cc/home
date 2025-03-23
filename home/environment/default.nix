@@ -3,8 +3,7 @@
   pkgs,
   paths,
   ...
-}:
-let
+}: let
   inherit (paths) local;
   inherit (pkgs) writeShellScriptBin;
 
@@ -51,8 +50,7 @@ let
   fmtree = writeShellScriptBin "Fmtree" ''
     Flux nix fmt
   '';
-in
-{
+in {
   home = {
     # file."hmConf".source = config.lib.file.mkOutOfStoreSymlink paths.local; #TODO: What can this do?
     sessionVariables = {
