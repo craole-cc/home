@@ -5,5 +5,5 @@
     ./shell.nix
   ];
 
-  # nixpkgs.config.allowUnfreePredicate = pkgs: builtins.elem (pkgs.lib.getName pkg) ["discord"];
+  nixpkgs.config.allowUnfreePredicate = pkgs: builtins.elem (pkgs.lib.getName pkg) ["discord"];
 }
