@@ -40,7 +40,7 @@
     '';
 
     flush = writeShellScriptBin "Flush" ''
-      Flux nix-store --gc && home-manager expire-generations 1
+      Flux home-manager expire-generations 1 && nix-collect-garbage --delete-old
     '';
 
     flick = writeShellScriptBin "Flick" ''
