@@ -8,46 +8,41 @@
     mkFlakeScript = name: script:
       pkgs.writeShellScriptBin name script;
 
-    flux = mkFlakeScript "Flux" ''
+    beAtHome = ''
       case "$PWD" in  "$HOME_FLAKE"/*) ;;
         *)
           pushd "$HOME_FLAKE" || exit 1
           trap 'popd' EXIT
           ;;
       esac
+    '';
 
+    flux = mkFlakeScript "Flux" ''
+      ${beAtHome}
       status="$(git status --short  2> /dev/null)"
       if [ -n "$status" ]; then
         gitui
+        [ $# -gt 0 ] && "$@"
       else
+        [ $# -gt 0 ] && "$@"
         exit 0
       fi
     '';
 
     fly = mkFlakeScript "Flake" ''
-      if [[ "$PWD" != "$HOME_FLAKE" ]]; then
-        pushd "$HOME_FLAKE" || exit 1
-        trap 'popd' EXIT
-      fi
+      ${beAtHome}
       nix flake update
     '';
 
     flash = mkFlakeScript "Flash" ''
-      if [[ "$PWD" != "$HOME_FLAKE" ]]; then
-        pushd "$HOME_FLAKE" || exit 1
-        trap 'popd' EXIT
-      fi
-      git status --porcelain >/dev/null && gitui
+      Flux
+      ${beAtHome}
       home-manager switch -b BaC --flake .
     '';
 
     flush = mkFlakeScript "Flush" ''
-      if [[ "$PWD" != "$HOME_FLAKE" ]]; then
-        pushd "$HOME_FLAKE" || exit 1
-        trap 'popd' EXIT
-      fi
-      status="$(git status --short  2> /dev/null)"
-      git status --porcelain >/dev/null && gitui
+      Flux
+      ${beAtHome}
       nix-store --gc
       home-manager expire-generations 1
     '';
