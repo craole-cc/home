@@ -3,23 +3,26 @@
     config,
     pkgs,
     ...
-  }: {
-    _module.args.fmt = {
+  }: let
+    fmt = {
       config = config.treefmt.build.configFile;
-      wrapper = config.treefmt.build.wrapper;
       packages = with pkgs; [
+        treefmt
         alejandra
         deadnix
-        shfmt
         shellcheck
+        shfmt
         mdsh
         taplo
         yamlfmt
-        biome
-        deno
+        nodePackages.biome
+        nodePackages.prettier
       ];
+      wrapper = config.treefmt.build.wrapper;
     };
-    formatter = config.treefmt.build.wrapper;
+  in {
+    _module.args = {inherit fmt;};
+    formatter = fmt.wrapper;
     treefmt = {
       projectRootFile = "flake.nix";
       programs = {

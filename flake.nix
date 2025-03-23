@@ -25,7 +25,11 @@
     };
   };
 
-  outputs = inputs @ {flake-parts, ...}:
+  outputs = inputs @ {
+    self,
+    flake-parts,
+    ...
+  }:
     flake-parts.lib.mkFlake {inherit inputs;} {
       debug = true;
       imports = with inputs; [
@@ -36,33 +40,30 @@
       ];
       systems = import inputs.systems;
       flake = {
-        homeConfigurations = let
+        homeConfigurations.craole = let
           inherit (inputs) nixpkgs home-manager;
-        in {
-          "craole@QBX" = let
-            system = "x86_64-linux";
-            pkgs = nixpkgs.legacyPackages."${system}";
-            # args.fmt = {
-            #   inherit (inputs.self.perSystem.${system}._module.args.fmt) config packages;
-            # };
-            paths = {
-              store = ./.;
-              local = "$HOME/Projects/admin";
-              modules = ./home;
+          system = "x86_64-linux";
+          pkgs = nixpkgs.legacyPackages."${system}";
+          args = {
+            #TODO: how can i get _modules.args here or passed into home-manager?
+          };
+          paths = {
+            store = ./.;
+            local = "$HOME/Projects/admin";
+            modules = ./home;
+          };
+        in
+          home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [paths.modules];
+            extraSpecialArgs = {
+              inherit
+                inputs
+                args
+                paths
+                ;
             };
-          in
-            home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [paths.modules];
-              extraSpecialArgs = {
-                inherit
-                  inputs
-                  # args
-                  paths
-                  ;
-              };
-            };
-        };
+          };
       };
     };
 }

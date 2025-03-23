@@ -1,8 +1,9 @@
-{args, ...}: {
-  home = let
-    inherit (args.fmt) packages config;
-  in {
+{args, ...}: let
+  inherit (args.fmt) packages config;
+in {
+  home = {
     inherit packages;
-    xdg.configFile."treefmt/config.toml".source = config;
+    shellAliases.fmtree = ''treefmt'';
   };
+  xdg.configFile."treefmt/config.toml".source = config;
 }
