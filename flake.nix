@@ -7,11 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs = {
     nixpkgs,
     home-manager,
+    treefmt-nix,
     ...
   }: let
     system = "x86_64-linux";
@@ -19,7 +21,7 @@
     homeConfigurations."craole" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
       modules = [
-        ./configuration
+        ./core
         ./packages
       ];
     };
