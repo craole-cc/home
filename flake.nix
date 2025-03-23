@@ -22,14 +22,6 @@
     homeConfigurations.${alpha} = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
-        {
-          home = {
-            username = alpha;
-            homeDirectory = "/home/${alpha}";
-            packages = [fmtree.package];
-            stateVersion = "24.11";
-          };
-        }
         ./core
         ./packages
       ];
