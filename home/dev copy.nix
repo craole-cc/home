@@ -8,15 +8,6 @@
     inherit name help command category;
   };
 
-  name = "Home Manager Development Environment";
-
-  msgs = {
-    usage = "To run a command, use: run <command-name>";
-    menu = "Run 'menu' to see available commands";
-    cmdUnknown = "Unknown command";
-    welcome = "Welcome to the ${name}!";
-  };
-
   commands = [
     (mkCommand {
       name = "update";
@@ -67,7 +58,7 @@
     YELLOW='\033[33m'
 
     # Print header
-    echo -e "\n''${BOLD}${name}''${RESET}\n"
+    echo -e "\n''${BOLD}Home Manager Configuration Menu''${RESET}\n"
 
     # Group commands by category
     echo -e "''${BLUE}Nix Commands:''${RESET}"
@@ -118,6 +109,13 @@
     echo -e "\n''${YELLOW}To run a command, use: run <command-name>''${RESET}\n"
   '';
 
+  msgs = {
+    usage = "To run a command, use: run <command-name>";
+    menu = "Run 'menu' to see available commands";
+    cmdUnknown = "Unknown command";
+    welcome = "Welcome to the Home Manager Development Environment!";
+  };
+
   runner = with msgs;
     pkgs.writeShellScriptBin "run" ''
       #!/usr/bin/env bash
@@ -135,36 +133,50 @@
           ;;
       esac
     '';
+
+  mkDevShell = {
+    name ? "home-manager-env",
+    packages ? [],
+  }:
+    pkgs.mkShell {
+      inherit name;
+
+      packages = with pkgs;
+        [
+          nixfmt-rfc-style
+          nixd
+          git
+          gitui
+          home-manager
+          menu
+          runner
+        ]
+        ++ packages;
+
+      shellHook = ''
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flux" "flux"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Fly" "fly"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flash" "flash"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flush" "flush"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flick" "flick"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Flake" "flake"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Fmtree" "fmtree"}/bin"
+        export PATH="$PATH:${pkgs.writeShellScriptBin "Fmt" "fmt"}/bin"
+
+        if [ -z "$HOME_FLAKE" ]; then
+          HOME_FLAKE="$PWD"
+          export HOME_FLAKE
+        fi
+
+        printf "%s\n%s\n" "${msgs.welcome}" "${msgs.menu}"
+      '';
+    };
 in
-  pkgs.mkShell {
-    inherit name;
+  mkDevShell {}
+# in {
+#   #@ Export the development shell creator
+#   inherit mkDevShell;
+#   #@ Export default devShell for convenience
+#   default = mkDevShell {};
+# }
 
-    packages = with pkgs; [
-      nixfmt-rfc-style
-      alejandra
-      nixd
-      git
-      gitui
-      home-manager
-      menu
-      runner
-    ];
-
-    shellHook = ''
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flux" "flux"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Fly" "fly"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flash" "flash"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flush" "flush"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flick" "flick"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Flake" "flake"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Fmtree" "fmtree"}/bin"
-      export PATH="$PATH:${pkgs.writeShellScriptBin "Fmt" "fmt"}/bin"
-
-      if [ -z "$HOME_FLAKE" ]; then
-        HOME_FLAKE="$PWD"
-        export HOME_FLAKE
-      fi
-
-      printf "%s\n%s\n" "${msgs.welcome}" "${msgs.menu}"
-    '';
-  }

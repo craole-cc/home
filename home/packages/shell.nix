@@ -3,7 +3,6 @@
     bash = {
       enable = true;
       shellAliases = {
-        ll = "ls -la";
         format-nix = "nix run nixpkgs#alejandra --";
       };
       initExtra = ''

@@ -3,7 +3,6 @@
 #   settings = {
 #     on-unmatched = "info";
 #     tree-root-file = ".git/index";
-
 #     formatter = {
 #       deadnix = {
 #         command = "deadnix";
@@ -28,29 +27,22 @@
 #     alejandra
 #   ];
 # }
-{ inputs, ... }:
 {
-  imports = [ inputs.treefmt.flakeModule ];
-  perSystem =
-    {
-      rustToolchain,
-      ...
-    }:
-    {
-      treefmt = {
-        projectRootFile = "flake.nix";
-        programs = {
-          nixfmt.enable = true;
-          # rustfmt = {
-          #   enable = true;
-          #   inherit (rustToolchain) package;
-          # };
-          just.enable = true;
-          taplo.enable = true;
-          shellcheck.enable = true;
-          shfmt.enable = true;
-          yamlfmt.enable = true;
-        };
+  perSystem = {
+    treefmt = {
+      projectRootFile = "flake.nix";
+      programs = {
+        nixfmt.enable = true;
+        # rustfmt = {
+        #   enable = true;
+        #   inherit (rustToolchain) package;
+        # };
+        just.enable = true;
+        taplo.enable = true;
+        shellcheck.enable = true;
+        shfmt.enable = true;
+        yamlfmt.enable = true;
       };
     };
+  };
 }
