@@ -15,17 +15,27 @@
     ...
   }: let
     system = "x86_64-linux";
+    alpha = "craole";
     pkgs = nixpkgs.legacyPackages.${system};
     fmtree = import ./core/formatter.nix {inherit pkgs;};
   in {
-    homeConfigurations."craole" = home-manager.lib.homeManagerConfiguration {
+    homeConfigurations.${alpha} = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
+        {
+          home = {
+            username = alpha;
+            homeDirectory = "/home/${alpha}";
+            packages = [fmtree.package];
+            stateVersion = "24.11";
+          };
+        }
         ./core
         ./packages
       ];
     };
-    # formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
-    formatter.${system} = fmtree;
+    formatter.${system} = import ./core/formatter.nix {inherit pkgs;};
+    # formatter.${system} = fmtree;
+    # formatter.${system} = pkgs.nixfmt-tree;
   };
 }
