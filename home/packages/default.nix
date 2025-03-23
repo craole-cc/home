@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   imports = [
-    # ./fmt.nix
+    ./fmt.nix
     ./git.nix
     ./nix.nix
     ./shell.nix
