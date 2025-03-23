@@ -49,7 +49,6 @@
     })
   ];
 
-  # Create menu script
   menu = pkgs.writeShellScriptBin "menu" ''
     #!/usr/bin/env bash
 
@@ -166,7 +165,7 @@
 
       packages = with pkgs;
         [
-          nixfmt-rfc-style
+          alejandra
           nixd
           git
           gitui
