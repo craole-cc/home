@@ -72,15 +72,15 @@ in {
     };
   };
 
-  config.environment = {
-    variables = {
-      DOTS = cfg.dots;
-      DOTS_BIN = cfg.dotsBin;
-      DOTS_CFG = cfg.dotsCFG;
-    };
-    shellAliases = {
-      qbx = ''cd ${cfg.base}'';
-      dots = ''cd ${cfg.dots}'';
-    };
-  };
+  # config.environment = {
+  #   variables = {
+  #     DOTS = cfg.dots;
+  #     DOTS_BIN = cfg.dotsBin;
+  #     DOTS_CFG = cfg.dotsCFG;
+  #   };
+  #   shellAliases = {
+  #     qbx = ''cd ${cfg.base}'';
+  #     dots = ''cd ${cfg.dots}'';
+  #   };
+  # };
 }
