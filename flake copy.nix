@@ -17,40 +17,32 @@
           overlays = builtins.attrValues inputs.self.overlays;
         };
       };
-      # flake = {
-      #   homeConfigurations.craole = let
-      #     inherit (inputs) nixpkgs home-manager;
-      #     # system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
-      #     # pkgs = nixpkgs.legacyPackages."${system}";
-      #     args = {
-      #       #TODO: how can i get _modules.args here or passed into home-manager?
-      #       # fmt = config._module.args.fmt;
-      #     };
-      #     paths = {
-      #       store = ./.;
-      #       local = "$HOME/Projects/admin";
-      #       modules = ./home;
-      #     };
-      #   in
-      #     home-manager.lib.homeManagerConfiguration {
-      #       # inherit pkgs;
-      #       modules = [paths.modules];
-      #       extraSpecialArgs = {
-      #         inherit
-      #           inputs
-      #           args
-      #           paths
-      #           ;
-      #       };
-      #     };
-      # };
       flake = {
-        modules = {
-          nixos = nixosModules;
-          home = homeManagerModules;
-        };
-        nixosModules = config.flake.modules.nixos;
-        homeModules = config.flake.modules.home;
+        homeConfigurations.craole = let
+          inherit (inputs) nixpkgs home-manager;
+          # system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
+          # pkgs = nixpkgs.legacyPackages."${system}";
+          args = {
+            #TODO: how can i get _modules.args here or passed into home-manager?
+            # fmt = config._module.args.fmt;
+          };
+          paths = {
+            store = ./.;
+            local = "$HOME/Projects/admin";
+            modules = ./home;
+          };
+        in
+          home-manager.lib.homeManagerConfiguration {
+            # inherit pkgs;
+            modules = [paths.modules];
+            extraSpecialArgs = {
+              inherit
+                inputs
+                args
+                paths
+                ;
+            };
+          };
       };
     };
 
