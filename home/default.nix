@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (self) lib;
-  inherit (inputs) home-manager;
+  inherit (inputs) nixpkgs home-manager;
   inherit (lib.custom) collectNixModulePaths;
   inherit (lib) concatLists genAttrs removePrefix;
   inherit (lib.attrsets) attrNames;
@@ -47,8 +47,8 @@ in {
   #   );
   flake = {
     homeConfigurations."${alpha}" = let
-      # system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
-      # pkgs = nixpkgs.legacyPackages."${system}";
+      system = "x86_64-linux"; #TODO: This is counterintuitive. I don't want to declare a system here, because it should work on all systems
+      pkgs = nixpkgs.legacyPackages."${system}";
       args = {
         #TODO: how can i get _modules.args here or passed into home-manager?
         # fmt = config._module.args.fmt;
@@ -60,7 +60,7 @@ in {
       };
     in
       home-manager.lib.homeManagerConfiguration {
-        # inherit pkgs;
+        inherit pkgs;
         modules = [paths.modules];
         extraSpecialArgs = {
           inherit
