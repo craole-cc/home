@@ -1,10 +1,10 @@
 {
-  # config,
+  config,
   pkgs,
-  paths,
+  # paths,
   ...
 }: let
-  inherit (paths) local;
+  inherit (config.dots.paths.flake) local;
   inherit (pkgs) writeShellScriptBin;
 
   #@ Define a helper to ensure we're in the flake directory
