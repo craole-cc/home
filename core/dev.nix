@@ -1,61 +1,119 @@
-{
-  perSystem.devshells.default = {pkgs, ...}: {
-    name = "Home Manager Development Environment";
-    packages = with pkgs; [
-      nixfmt-rfc-style
-      alejandra
-      nixd
-      git
-      gitui
-      home-manager
-    ];
-    commands = [
-      {
-        name = "update";
-        help = "Update flake inputs (Fly)";
-        command = "nix flake update";
-        category = "maintenance";
-      }
-      {
-        name = "switch";
-        help = "Switch to the new home-manager configuration (Flash)";
-        command = "home-manager switch --flake .#craole@QBX";
-        category = "maintenance";
-      }
-      {
-        name = "clean";
-        help = "Clean up old generations and garbage collect (Flush)";
-        command = "nix-collect-garbage -d && home-manager expire-generations '-7 days'";
-        category = "maintenance";
-      }
-      {
-        name = "format";
-        help = "Format nix files (Fmtree)";
-        command = "alejandra .";
-        category = "development";
-      }
-      {
-        name = "rebuild-all";
-        help = "Update, clean, and switch to new configuration (Flick)";
-        command = "nix flake update && home-manager switch --flake .#craole@QBX && nix-collect-garbage -d";
-        category = "maintenance";
-      }
-      {
-        name = "edit";
-        help = "Open the configuration in your editor (Flake)";
-        command = "$EDITOR .";
-        category = "development";
-      }
-    ];
-    env = [
-      {
-        name = "HOME_FLAKE";
-        eval = "$PWD";
-      }
-      {
-        name = "EDITOR";
-        eval = "code";
-      }
-    ];
+{inputs, ...}: {
+  imports = [
+    inputs.devshell.flakeModule
+  ];
+
+  perSystem = {
+    config,
+    lib,
+    pkgs,
+    inputs',
+    ...
+  }: let
+    nixConfig = builtins.toFile "nix.conf" ''
+      warn-dirty = false
+      http2 = true
+      experimental-features = nix-command flakes pipe-operators
+      use-xdg-base-directories = true
+    '';
+
+    nix-unit = inputs'.nix-unit.packages.default;
+    deploy-rs = inputs'.deploy-rs.packages.deploy-rs; # remote deployment
+  in {
+    # Now I know what happened to just-flake. Change this to devshells made me unable to define the inputsFrom attr
+    # devShells.default.inputsFrom = [ config.just-flake.outputs.devShell ];
+
+    devshells = {
+      default = {
+        name = "nixos-config-dev";
+        env = [
+          {
+            name = "NIX_USER_CONF_FILES";
+            value = nixConfig;
+          }
+          {
+            name = "PATH";
+            prefix = "bin";
+          }
+          {
+            name = "FLAKE";
+            value = ".";
+          }
+          {
+            name = "NH_FLAKE";
+            value = ".";
+          }
+        ];
+        packagesFrom = [
+          config.treefmt.build.devShell
+        ];
+
+        packages = with pkgs;
+          [
+            direnv
+            nil
+            nix-output-monitor
+            nh
+
+            gitAndTools.hub
+            gh
+
+            onefetch
+            fastfetch
+
+            just
+            nix-unit
+            age-plugin-yubikey
+            agenix-rekey
+
+            config.formatter
+          ]
+          ++ lib.lists.optionals pkgs.stdenv.hostPlatform.isLinux [deploy-rs];
+
+        devshell = {
+          startup = {
+            pre-commit.text = config.pre-commit.installationScript;
+          };
+        };
+
+        commands = [
+          {
+            name = "quit";
+            help = "exit dev shell";
+            command = "exit";
+          }
+          {
+            category = "info";
+            name = "onefetch";
+            help = "display repository info";
+            package = pkgs.onefetch;
+          }
+          {
+            category = "info";
+            name = "fastfetch";
+            help = "display host info";
+            package = pkgs.fastfetch;
+          }
+          {
+            name = "environment";
+            category = "info";
+            help = "display environment variables";
+            command = "printenv";
+          }
+          {
+            name = "flake-show";
+            category = "info";
+            help = "display your flake outputs";
+            command = "nix flake show";
+          }
+          {
+            name = "tests";
+            category = "dev";
+            help = "run unit tests";
+            command = "nix-unit --flake .#tests";
+          }
+        ];
+      };
+    };
   };
 }

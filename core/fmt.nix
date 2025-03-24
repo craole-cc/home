@@ -27,8 +27,9 @@
       projectRootFile = "flake.nix";
       programs = {
         #| Nix
-        alejandra = {
+        nixfmt = {
           enable = true;
+          package = pkgs.nixfmt-rfc-style;
           priority = 2;
         };
         deadnix = {
@@ -47,6 +48,9 @@
         };
 
         #| Documentation & Configuration
+        actionlint = {
+          enable = true;
+        };
         mdsh = {
           enable = true;
           priority = 1;
