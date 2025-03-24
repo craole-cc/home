@@ -13,15 +13,18 @@
         # devshell.flakeModule
         # treefmt-nix.flakeModule
       ];
-      flake = {
+      flake = let
+        lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
+      in {
         options = {
-          dots.home = {
+          dots.paths.flake.local = lib.options.mkOption {
             type = "string";
             default = "$HOME/Projects/admin";
+            description = "The path to the DOTS configuration flake.";
           };
         };
         config = {
-          lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
+          inherit lib;
         };
       };
     };
