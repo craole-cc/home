@@ -16,17 +16,17 @@
       flake = let
         lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
         inherit (lib.options) mkOption;
-        inherit (lib.types) str;
+        inherit (lib.types) str either path;
       in {
         options = {
           dots.paths.flake = {
             store = mkOption {
-              type = str;
+              type = either path str;
               default = ./.;
               description = "The path to the DOTS configuration flake.";
             };
             local = mkOption {
-              type = str;
+              type = either path str;
               default = "$HOME/Projects/admin";
               description = "The path to the DOTS configuration flake.";
             };
