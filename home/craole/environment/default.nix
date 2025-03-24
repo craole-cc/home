@@ -1,10 +1,11 @@
 {
   config,
   pkgs,
+  dots,
   # paths,
   ...
 }: let
-  inherit (config.dots.paths.flake) local;
+  inherit (dots.paths) base;
   inherit (pkgs) writeShellScriptBin;
 
   #@ Define a helper to ensure we're in the flake directory
@@ -54,7 +55,7 @@ in {
   home = {
     # file."hmConf".source = config.lib.file.mkOutOfStoreSymlink paths.local; #TODO: What can this do?
     sessionVariables = {
-      HOME_FLAKE = "${local}";
+      HOME_FLAKE = "${base}";
       EDITOR = "code";
     };
     packages = [
