@@ -14,12 +14,14 @@
         # treefmt-nix.flakeModule
       ];
       flake = {
-        lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
         options = {
           dots.home = {
             type = "string";
             default = "$HOME/Projects/admin";
           };
+        };
+        config = {
+          lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
         };
       };
     };
