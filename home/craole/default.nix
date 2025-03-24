@@ -1,21 +1,12 @@
 {
   home = {
+    stateVersion = "24.11";
     username = "craole";
+    homeDirectory = "/home/craole";
   };
-
-  modules = {
-    shell = {
-      enable = true;
-      type = "zsh";
-      prompt.type = "starship";
-      cli.enable = true;
-    };
-
-    data = {
-      xdg.enable = true;
-      persistence.enable = true;
-    };
-
-    # theme = {}
-  };
+  programs.home-manager.enable = true;
+  imports = [
+    ./environment
+    ./packages
+  ];
 }
