@@ -18,7 +18,7 @@
       in {
         options = {
           dots.paths.flake.local = lib.options.mkOption {
-            type = "string";
+            type = lib.types.str;
             default = "$HOME/Projects/admin";
             description = "The path to the DOTS configuration flake.";
           };
