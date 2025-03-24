@@ -7,10 +7,9 @@
       systems = import inputs.systems;
       imports = with inputs; [
         # flake-parts.flakeModules.partitions
-
         easy-hosts.flakeModule
+        home-manager.flakeModules.home-manager
         ./home
-        # home-manager.flakeModules.home-manager
         # devshell.flakeModule
         # treefmt-nix.flakeModule
       ];
