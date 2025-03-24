@@ -6,12 +6,15 @@
       debug = true;
       systems = import inputs.systems;
       imports = with inputs; [
-        flake-parts.flakeModules.partitions
+        # flake-parts.flakeModules.partitions
         ./home
         # home-manager.flakeModules.home-manager
         # devshell.flakeModule
         # treefmt-nix.flakeModule
       ];
+      flake = {
+        lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
+      };
     };
   inputs = {
     nixpkgs = {
