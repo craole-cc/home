@@ -65,7 +65,7 @@ in {
         extraSpecialArgs = {
           inherit
             inputs
-            # args
+            args
             paths
             ;
         };
