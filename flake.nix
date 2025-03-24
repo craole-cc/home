@@ -9,32 +9,13 @@
         # flake-parts.flakeModules.partitions
         easy-hosts.flakeModule
         home-manager.flakeModules.home-manager
+        ./core
         ./home
         # devshell.flakeModule
         # treefmt-nix.flakeModule
       ];
-      flake = let
+      flake = {
         lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
-        inherit (lib.options) mkOption;
-        inherit (lib.types) str either path;
-      in {
-        options = {
-          dots.paths.flake = {
-            store = mkOption {
-              type = either path str;
-              default = ./.;
-              description = "The path to the DOTS configuration flake.";
-            };
-            local = mkOption {
-              type = either path str;
-              default = "$HOME/Projects/admin";
-              description = "The path to the DOTS configuration flake.";
-            };
-          };
-        };
-        config = {
-          inherit lib;
-        };
       };
     };
   inputs = {
