@@ -15,7 +15,7 @@
       ];
       flake = {
         lib = (import ./lib inputs.nixpkgs) // inputs.home-manager.lib;
-        pop="lol";
+        dots.home = "$HOME/Projects/admin";
       };
     };
   inputs = {
