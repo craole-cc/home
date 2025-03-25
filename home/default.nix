@@ -67,6 +67,7 @@ in {
             inputs
             args
             paths
+            self
             ;
         };
       };
